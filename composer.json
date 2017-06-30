@@ -1,0 +1,23 @@
+{
+    "name": "rstoetter/cSqlScript",
+    "description": "class to execute sql scripts",
+    "license": "MIT",
+    "keywords": ["sql", "batch","library"],
+    "authors": [
+        {
+            "name": "Rainer Stötter",
+            "email": "rstoetter@users.sourceforge.net"
+        }
+    ],
+    "require": {
+	"rstoetter/cTextParser-php": "dev-master"
+    },
+    "require-dev": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "rstoetter\\cSqlScript-php\\": "src"
+        }
+    }
+}
