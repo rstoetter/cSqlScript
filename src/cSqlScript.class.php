@@ -16,7 +16,7 @@ namespace rstoetter\cSqlScript;
   *
   */
 
-class cSqlScript extends cTextParser {
+class cSqlScript extends rstoetter\cTextParser {
 
     /**
       *
