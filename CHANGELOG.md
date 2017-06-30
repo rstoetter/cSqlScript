@@ -1,4 +1,4 @@
-# changelog of cSqlScript-php
+# changelog of cSqlScript
 
 ## Release  1.0.1
 
@@ -8,5 +8,5 @@
 
 ## pre-releases
 
-- 2017-05-28 creating the repository
+- 2017-06-30 creating the repository
 - 2010       development of the base classes
