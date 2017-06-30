@@ -1,5 +1,5 @@
 {
-    "name": "rstoetter/cSqlScript",
+    "name": "rstoetter/csqlscript-php",
     "description": "class to execute sql scripts",
     "license": "MIT",
     "keywords": ["sql", "batch","library"],
@@ -10,14 +10,14 @@
         }
     ],
     "require": {
-	"rstoetter/cTextParser-php": "dev-master"
+        "rstoetter/ctextparser-php": ">=1.0.0"
     },
     "require-dev": {
 
     },
     "autoload": {
         "psr-4": {
-            "rstoetter\\cSqlScript-php\\": "src"
+            "rstoetter\\csqlscript-php\\": "src"
         }
     }
 }
