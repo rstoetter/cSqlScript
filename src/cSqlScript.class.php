@@ -7,7 +7,8 @@ namespace rstoetter\cSqlScript;
 /**
   *
   * The class cSqlScript executes mysql sql scripts. The namespace is rstoetter\cSqlScript.
-  * It recognizes line delimiters and emulates found BEGIN, COMMIT and ROLLBACK
+  * It recognizes line delimiters and emulates found BEGIN, COMMIT and ROLLBACK statements
+  * You can provide callables to be executed before and after each processed SQL statement
   *
   * @author Rainer Stötter
   * @copyright 2010-2017 Rainer Stötter
@@ -59,6 +60,16 @@ class cSqlScript extends rstoetter\cTextParser {
 
 
     public $m_table_names = array( );
+    
+    /**
+      *
+      * @var array $m_a_callables user defined functions to be called
+      *
+      */
+
+
+    public $m_a_callables = null;          
+    
 
     /**
       *
@@ -68,14 +79,21 @@ class cSqlScript extends rstoetter\cTextParser {
       *
       *
       * @param string fname is the name of the script file to execute
+      * @param array $a_callables associative array with user defined functions to be called. Supported array keys are 'statement_before', 'statement_after', 'script_before', 'script_after'. The value part should be a callable. The statement_xxx-callables receive the SQL processed statement as string as first parameter. The script_xxx-callables receive the script as string as first parameter
       * @param bool $debug whether debug messages should be displayed or not. It defaults to false
       *
       */
 
-    public function __construct( $fname, $debug = false ) {
+    public function __construct( 
+        string $fname, 
+        array $a_callables= array( ),
+        bool $debug = false 
+    ) {
 
-	assert( is_string( $fname ) );
+        assert( is_string( $fname ) );
         assert( strlen( $fname ) );
+        
+        $this->m_a_callables = $a_callables;
 
         $this->cTextParser( $fname, $debug );
 
@@ -228,8 +246,30 @@ class cSqlScript extends rstoetter\cTextParser {
         if ($this->m_debug) echo "<br>ExecuteNextLine() mit<br>$this->m_next_line<br>";
 
         $query = $this->m_next_line;
+        
+        //
+        //
+        //
+        
+        if ( array_key_exists( 'statement_before', $this->m_a_callables ) ){
+        
+            $a_callable = $this->m_a_callables[ 'statement_before' ];
+            if ( ( count( $a_callable ) > 1 ) && ( is_callable( $a_callable[ 1 ] ) ) ) {
+                $callable = $a_callable[ 1 ];
+                
+                $callable( $query );
+                
+            }
+            
+        
+        }
+        
+        //
+        //
+        //
+        
 
-        if ( !strlen( $query ) ) return true;
+        if ( ! strlen( $query ) ) return true;
 
         if ( strtoupper( substr( $query, 0, 5 ) == 'BEGIN' ) ) {
             $this->m_mysqli->autocommit( FALSE );
@@ -277,6 +317,27 @@ class cSqlScript extends rstoetter\cTextParser {
             }
 
         }
+        
+        //
+        //
+        //
+        
+        if ( array_key_exists( 'statement_after', $this->m_a_callables ) ){
+        
+            $a_callable = $this->m_a_callables[ 'statement_after' ];
+            if ( ( count( $a_callable ) > 1 ) && ( is_callable( $a_callable[ 1 ] ) ) ) {
+                $callable = $a_callable[ 1 ];
+                
+                $callable( $query );
+                
+            }
+            
+        
+        }
+        
+        //
+        //
+        //        
 
         if ( strlen($this->m_mysqli->error)) echo "<br>" . $this->m_mysqli->error;
         if ( !$ret ) echo "<hr><br>$query<br><hr>" . $this->m_mysqli->error;
@@ -340,9 +401,24 @@ class cSqlScript extends rstoetter\cTextParser {
         $line = 0;
 
         $this->m_mysqli = OpenTBVSDB();
+        
+        if ( array_key_exists( 'script_before', $this->m_a_callables ) ){
+        
+            $a_callable = $this->m_a_callables[ 'script_before' ];
+            if ( ( count( $a_callable ) > 1 ) && ( is_callable( $a_callable[ 1 ] ) ) ) {
+                $callable = $a_callable[ 1 ];
+                
+                $callable( $this->m_script );
+                
+            }
+            
+        
+        }
 
         while ($ret && $this->GetNextLine() ) {
+        
             $line ++;
+            
             if ( ! $this->ExecuteNextLine( ) ) {
                 throw new \Exception( "<br>Fehler beim Ausf&uuml;hren der SQL-Zeile :<br>" . $this->m_next_line );
                 $ret = false;
@@ -364,6 +440,20 @@ class cSqlScript extends rstoetter\cTextParser {
             if ( ! self::ExistsTable( $tablename ) ) echo "<br>hat Tabelle '$tablename' nicht angelegt !"; else echo "<br>hat Tabelle '$tablename' angelegt !";
         }
 
+        if ( array_key_exists( 'script_after', $this->m_a_callables ) ){
+        
+            $a_callable = $this->m_a_callables[ 'script_after' ];
+            if ( ( count( $a_callable ) > 1 ) && ( is_callable( $a_callable[ 1 ] ) ) ) {
+                $callable = $a_callable[ 1 ];
+                
+                $callable( $this->m_script );
+                
+            }
+            
+        
+        }
+        
+        
         if ($this->m_debug) echo "<br>ExecuteScript() abgeschlossen";
 
 
