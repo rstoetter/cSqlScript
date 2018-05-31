@@ -10,6 +10,7 @@
         }
     ],
     "require": {
+        "php": ">=7.0",
         "rstoetter/ctextparser-php": ">=1.0.0"
     },
     "require-dev": {

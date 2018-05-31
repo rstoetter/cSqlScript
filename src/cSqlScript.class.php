@@ -124,7 +124,7 @@ class cSqlScript extends rstoetter\cTextParser {
       *
       */
 
-    protected function GetNextLine() {
+    protected function GetNextLine() : bool {
 
         // echo "<br>GetNextLine() : ";
 
@@ -239,7 +239,7 @@ class cSqlScript extends rstoetter\cTextParser {
       */
 
 
-    protected function ExecuteNextLine( ) {
+    protected function ExecuteNextLine( ) : bool {
 
         $ret = true;
 
@@ -358,7 +358,7 @@ class cSqlScript extends rstoetter\cTextParser {
       */
 
 
-    public function GetTableNameInNextLine( ) {
+    public function GetTableNameInNextLine( ) : string {
 
         $ret = '';
         $pos = 0;
@@ -396,7 +396,7 @@ class cSqlScript extends rstoetter\cTextParser {
       */
 
 
-    public function ExecuteScript() {
+    public function ExecuteScript() : bool {
         $ret = true;
         $line = 0;
 
@@ -473,7 +473,7 @@ class cSqlScript extends rstoetter\cTextParser {
       *
       */
 
-    static protected function ExistsTable( $mysqli, $tablename ) {
+    static protected function ExistsTable( $mysqli, $tablename ) : bool {
 
 	assert( is_a( $m_mysqli, 'mysqli' ) );
 	assert( is_string( $tablename ) );
